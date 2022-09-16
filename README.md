@@ -317,7 +317,7 @@ Manage transactions
 
 
 
-jpa.save(product);
+session.save(product);
 jpa.update(product);
 jpa.get(productId);
 
@@ -330,7 +330,142 @@ DB:
 Hibernate	-JPA Framework
 
 
+Step 1:
 External libraries
+
+Step 2: HibernateUtil
+
+package com.training.pms.ofss.config;
+
+import java.util.Properties;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+
+public class HibernateUtil {
+
+	private static SessionFactory sessionFactory;
+
+	public static SessionFactory getSessionFactory() {
+			try {
+				Configuration configuration = new Configuration();
+
+				// Hibernate settings equivalent to hibernate.cfg.xml's properties
+				Properties settings = new Properties();
+				settings.put(Environment.DRIVER, "com.mysql.jdbc.Driver");
+				settings.put(Environment.URL, "jdbc:mysql://localhost:3306/ofss?useSSL=false");
+				settings.put(Environment.USER, "root");
+				settings.put(Environment.PASS, "root");
+				settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
+
+				//settings.put(Environment.SHOW_SQL, "true");
+
+				settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+
+				settings.put(Environment.HBM2DDL_AUTO, "create-drop");
+
+				configuration.setProperties(settings);
+			
+				//required for mysql 8
+			//	ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+				//		.applySettings(configuration.getProperties()).build();
+				System.out.println("Hibernate Java Config serviceRegistry created");
+			//	sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+				sessionFactory = configuration.buildSessionFactory();
+				
+				return sessionFactory;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		return sessionFactory;
+	}
+}
+
+
+
+Use case : We have to save product information into database .
+
+Step2: Open Product.java and specify table and column details
+
+
+
+Criteria in JPQL
+===================
+
+JMS
+=========
+
+Java Messaging Service
+
+allows different software applications to communicate with each other.
+
+application-to-application messaging system
+
+applications		--> 	destinations		<--	application
+
+JMS is analogous to JDBC
+
+Two messaging models :
+
+Publish and subscribe
+(1-M)
+Publisher		-->	Topic		-->	Subscriber
+					-->	Subscriber
+
+Point to point
+(1-1)
+
+Sender		-->	Queue		-->	Reciever
+
+
+Players in JMS App
+=================
+JMS clients	(Producer/Consumer)
+Messages
+Adminstered Objects
+	--ConnectionFactory
+	--Destination(queue or topic)
+
+JMS providers
+
+Use case : When adding a product, we want to send a message "Lakme has been added in stock"
+
+
+Activemq
+
+
+
+		Context context = null;
+		ConnectionFactory factory = null;
+		Connection connection = null;
+
+		Properties initialProperties = new Properties();
+
+		initialProperties.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.activemq.jndi.ActiveMQInitialContextFactory");
+		initialProperties.put(Context.PROVIDER_URL, "tcp://localhost:61616");
+		initialProperties.put("queue.queueSampleQueue", "MyNewQueue");
+		
+
+		context = new InitialContext(initialProperties);
+		
+		factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
